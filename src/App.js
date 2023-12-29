@@ -26,13 +26,38 @@ function App() {
       });
       if (response.status === 200) {
         console.log("성공");
-        setTodoValue([])
-        getTasks()
+        setTodoValue("");
+        getTasks();
       } else {
         throw new Error("task can not be added");
       }
     } catch (err) {
-      console.log("에러", err)
+      console.log("에러", err);
+    }
+  };
+
+  const deleteTask = async (id) => {
+    try {
+      const response = await api.delete(`/tasks/${id}`);
+      if (response.status === 200) {
+        getTasks();
+      }
+    } catch (err) {
+      console.log("에러", err);
+    }
+  };
+
+  const isDoneTask = async (id) => {
+    try {
+      const task = todoList.find((i) => i._id === id);
+      const response = await api.put(`/tasks/${id}`, {
+        isComplete: !task.isComplete,
+      });
+      if (response.status === 200) {
+        getTasks();
+      }
+    } catch (err) {
+      console.log("에러", err);
     }
   };
 
@@ -59,7 +84,11 @@ function App() {
         </Col>
       </Row>
 
-      <TodoBoard todoList={todoList} />
+      <TodoBoard
+        todoList={todoList}
+        deleteTask={deleteTask}
+        isDoneTask={isDoneTask}
+      />
     </Container>
   );
 }
